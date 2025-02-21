@@ -1,0 +1,6 @@
+@discover_small_artists_api_HostAddress = http://localhost:5237
+
+GET {{discover_small_artists_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

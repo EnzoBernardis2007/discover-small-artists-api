@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "tm5PmY+TwxVseBMw2GrHwtmhDEVBtDZTAIiR7WDPEr4=",
+  "Source": "discover-small-artists-api",
+  "BasePath": "_content/discover-small-artists-api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

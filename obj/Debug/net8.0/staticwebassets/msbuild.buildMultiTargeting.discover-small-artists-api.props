@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\discover-small-artists-api.props" />
+</Project>

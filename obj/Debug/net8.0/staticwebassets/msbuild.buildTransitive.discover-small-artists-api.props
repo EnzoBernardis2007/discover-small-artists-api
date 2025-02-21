@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\discover-small-artists-api.props" />
+</Project>
