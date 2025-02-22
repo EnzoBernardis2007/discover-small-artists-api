@@ -29,10 +29,10 @@ namespace discover_small_artists_api.Controllers
         {
             var spotify = new SpotifyClient(await GetSpotifyTokenAsync());
 
-            var searchRequest = new SearchRequest(SearchRequest.Types.Artist, "artist")
+            var searchRequest = new SearchRequest(SearchRequest.Types.Artist, ((char)new Random().Next('a', 'z' + 1)).ToString())
             {
                 Limit = 50,
-                Offset = new Random().Next(0, 1000) 
+                Offset = new Random().Next(0, 950) 
             };
 
             var searchResults = await spotify.Search.Item(searchRequest);
