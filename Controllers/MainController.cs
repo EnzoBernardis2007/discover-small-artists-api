@@ -25,7 +25,7 @@ namespace discover_small_artists_api.Controllers
         }
 
         [HttpGet("random-small-artists")]
-        public async Task<IActionResult> GetRandomSmallArtists()
+        public async Task<IActionResult> GetRandomSmallArtists([FromQuery] int followersLimit = 100000)
         {
             var spotify = new SpotifyClient(await GetSpotifyTokenAsync());
 
@@ -36,8 +36,6 @@ namespace discover_small_artists_api.Controllers
             };
 
             var searchResults = await spotify.Search.Item(searchRequest);
-
-            int followersLimit = 100000;
 
             var smallArtists = searchResults.Artists.Items
                 .Where(a => a.Followers.Total < followersLimit)
