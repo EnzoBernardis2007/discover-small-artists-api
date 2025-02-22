@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SpotifyAPI.Web;
+using Microsoft.Extensions.Configuration; 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,18 +12,29 @@ namespace discover_small_artists_api.Controllers
     [Route("api")]
     public class MainController : ControllerBase
     {
-        private static string clientId = "14a01892998c454886e55c329d0c637b";  // Substitua pelo seu Client ID
-        private static string clientSecret = "adf4dbcea7ed483696c0a15fa35bb9f4";  // Substitua pelo seu Client Secret
+        private readonly IConfiguration _configuration;
 
-        [HttpGet("random-small-artist")]
-        public async Task<IActionResult> GetRandomSmallArtist()
+        private string clientId;
+        private string clientSecret;
+
+        public MainController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            clientId = _configuration["Spotify:ClientId"];
+            clientSecret = _configuration["Spotify:ClientSecret"];
+        }
+
+        [HttpGet("random-small-artists")]
+        public async Task<IActionResult> GetRandomSmallArtists()
         {
             var spotify = new SpotifyClient(await GetSpotifyTokenAsync());
 
             var searchRequest = new SearchRequest(SearchRequest.Types.Artist, "artist")
             {
-                Limit = 50 // Limita a busca a 50 resultados
+                Limit = 50,
+                Offset = new Random().Next(0, 1000) 
             };
+
             var searchResults = await spotify.Search.Item(searchRequest);
 
             int followersLimit = 100000;
@@ -33,18 +45,44 @@ namespace discover_small_artists_api.Controllers
 
             if (!smallArtists.Any())
             {
-                return NotFound(new { message = $"no artist with less than {followersLimit} followers." });
+                return NotFound(new { message = $"No artists found with less than {followersLimit} followers." });
             }
 
             var random = new Random();
-            var selectedArtist = smallArtists[random.Next(smallArtists.Count)];
+            var randomArtists = smallArtists.OrderBy(x => random.Next()).Take(10).ToList();
 
-            return Ok(new
+            var tasks = new List<Task<object>>();
+
+            foreach (var artist in randomArtists)
             {
-                Name = selectedArtist.Name,
-                Followers = selectedArtist.Followers.Total,
-                ImageUrl = selectedArtist.Images.FirstOrDefault()?.Url ?? "No image"
-            });
+                tasks.Add(GetArtistDataAsync(spotify, artist.Id));
+            }
+
+            var results = await Task.WhenAll(tasks);
+
+            return Ok(results);
+        }
+
+        private async Task<object> GetArtistDataAsync(SpotifyClient spotify, string artistId)
+        {
+            var artist = await spotify.Artists.Get(artistId);
+            var topTracksRequest = new ArtistsTopTracksRequest("US");
+            var topTracks = await spotify.Artists.GetTopTracks(artistId, topTracksRequest);
+
+            var topTrackInfo = topTracks.Tracks.Take(5).Select(track => new
+            {
+                Name = track.Name,
+                Id = track.Id,
+                ImageUrl = track.Album.Images.FirstOrDefault()?.Url ?? "No image"
+            }).ToList();
+
+            return new
+            {
+                Name = artist.Name,
+                Followers = artist.Followers.Total,
+                ImageUrl = artist.Images.FirstOrDefault()?.Url ?? "No image",
+                TopTracks = topTrackInfo
+            };
         }
 
         private async Task<string> GetSpotifyTokenAsync()
