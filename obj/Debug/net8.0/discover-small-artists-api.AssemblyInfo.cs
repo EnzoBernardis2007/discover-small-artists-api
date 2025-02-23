@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("discover-small-artists-api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2fabb000d96e1dea0148a15ea7b388156780304e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1dbf7def0cc5d829474ad05d0ad4daf8d5866c9f")]
 [assembly: System.Reflection.AssemblyProductAttribute("discover-small-artists-api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("discover-small-artists-api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
